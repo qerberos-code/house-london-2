@@ -146,6 +146,8 @@ tests the leading explanations against each other with public data.
 
 ## Team ARTMF
 
+![Team ARTMF at House London #2](docs/team-artmf.jpg)
+
 | Name | GitHub | Contributed |
 |---|---|---|
 | Angus | [@qerberos-code](https://github.com/qerberos-code) | Repo setup, README |

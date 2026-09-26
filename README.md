@@ -31,8 +31,9 @@ Full method, results, robustness checks and limitations: **[REPORT.md](REPORT.md
 
 ## The simulator
 
-**[`outputs/simulator.html`](outputs/simulator.html)** runs the fitted model in the browser. Download
-it and open it locally; it needs no server or internet connection.
+**[Open the simulator](https://qerberos-code.github.io/house-london-2/outputs/simulator.html)**
+(source: [`outputs/simulator.html`](outputs/simulator.html)). It runs the fitted model in the browser.
+You can also download the file and open it locally; it works offline.
 
 - **Set the market:** mortgage rate over the next 3 years, build-cost rise, local home sales versus normal.
 - **Set the scheme:** number of homes, share for sale, borough, tall building or not.
@@ -82,7 +83,7 @@ above a 5% mortgage rate.
 | `exploratory.py` | Exploration of House London's Foundations dataset (PlanIt applications), used for validation only |
 | `schemes_with_market.csv` | A teammate's merged scheme and market table. Not produced by the scripts above |
 | `outputs/` | Charts, model results, marginal effects, decomposition, robustness table and the simulator |
-| `outputs/London Housing Delivery vs Financing Conditions.html` | "Where London Housing Delivery Stalls": a standalone presentation page following 26,961 permissions decided 2018 to 2023 |
+| `outputs/London Housing Delivery vs Financing Conditions.html` | ["Where London Housing Delivery Stalls"](https://qerberos-code.github.io/house-london-2/outputs/London%20Housing%20Delivery%20vs%20Financing%20Conditions.html): a standalone presentation page following 26,961 permissions decided 2018 to 2023 |
 
 ## Reproduce
 

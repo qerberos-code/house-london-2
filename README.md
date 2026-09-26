@@ -82,6 +82,7 @@ above a 5% mortgage rate.
 | `exploratory.py` | Exploration of House London's Foundations dataset (PlanIt applications), used for validation only |
 | `schemes_with_market.csv` | A teammate's merged scheme and market table. Not produced by the scripts above |
 | `outputs/` | Charts, model results, marginal effects, decomposition, robustness table and the simulator |
+| `outputs/London Housing Delivery vs Financing Conditions.html` | "Where London Housing Delivery Stalls": a standalone presentation page following 26,961 permissions decided 2018 to 2023 |
 
 ## Reproduce
 
@@ -144,4 +145,10 @@ tests the leading explanations against each other with public data.
 
 ## Team
 
-*Add team name and members here.*
+| Name | GitHub | Contributed |
+|---|---|---|
+| Angus | [@qerberos-code](https://github.com/qerberos-code) | Repo setup, README |
+| Tommaso Fazzi | [@TommasoFazzi](https://github.com/TommasoFazzi) | Data pipeline, model, robustness checks, simulator, report |
+| Mohammad Faisal | [@MFaisal077](https://github.com/MFaisal077) | "Where London Housing Delivery Stalls" presentation page |
+
+Team members not listed here: add yourself in a pull request.

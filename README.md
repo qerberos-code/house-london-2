@@ -153,5 +153,5 @@ tests the leading explanations against each other with public data.
 | Angus Chen | [@qerberos-code](https://github.com/qerberos-code) | 
 | Tommaso Fazzi | [@TommasoFazzi](https://github.com/TommasoFazzi) | 
 | Mohammad Faisal | [@MFaisal077](https://github.com/MFaisal077) | 
-| Minchy Cheng minchycheng@gmail.com| [@minchycheng-s](https://github.com/minchycheng-s))  
+| Minchy Cheng minchycheng@gmail.com| [@minchycheng-s(https://github.com/minchycheng-s))  
 Team members not listed here: add yourself in a pull request.

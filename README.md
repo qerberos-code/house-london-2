@@ -150,8 +150,8 @@ tests the leading explanations against each other with public data.
 
 | Name | GitHub | Contributed |
 |---|---|---|
-| Angus | [@qerberos-code](https://github.com/qerberos-code) | Repo setup, README |
-| Tommaso Fazzi | [@TommasoFazzi](https://github.com/TommasoFazzi) | Data pipeline, model, robustness checks, simulator, report |
-| Mohammad Faisal | [@MFaisal077](https://github.com/MFaisal077) | "Where London Housing Delivery Stalls" presentation page |
-
+| Angus Chen | [@qerberos-code](https://github.com/qerberos-code) | 
+| Tommaso Fazzi | [@TommasoFazzi](https://github.com/TommasoFazzi) | 
+| Mohammad Faisal | [@MFaisal077](https://github.com/MFaisal077) | 
+| Minchy | [@MFaisal077](https://github.com/MFaisal077) | 
 Team members not listed here: add yourself in a pull request.

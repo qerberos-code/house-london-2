@@ -1,0 +1,10 @@
+scheme,shock,effect_pp,ci_low,ci_high
+0% for sale,+1pp mortgage rate,5.25,2.8,7.13
+0% for sale,+10pp build-cost rise,1.66,0.72,2.9
+0% for sale,−20% local home sales,1.45,-1.6,7.9
+50% for sale,+1pp mortgage rate,5.41,3.46,6.91
+50% for sale,+10pp build-cost rise,2.63,1.2,4.2
+50% for sale,−20% local home sales,1.49,-1.05,5.8
+100% for sale,+1pp mortgage rate,4.44,2.88,6.07
+100% for sale,+10pp build-cost rise,3.99,1.78,6.29
+100% for sale,−20% local home sales,1.11,-1.74,4.39

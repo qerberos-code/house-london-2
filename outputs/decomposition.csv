@@ -1,0 +1,11 @@
+scenario,lapse_pct,ci_low,ci_high
+Actual market,29.3,25.5,33.3
+Rates at 2014-19 level,17.2,15.0,19.8
+Costs at 2014-19 level,24.5,21.0,28.1
+Local sales at 2014-19 level,28.5,24.7,32.3
+All at 2014-19 level,13.5,12.2,15.1
+Share of rise removed: rates,76.4,62.5,87.5
+Share of rise removed: costs,30.5,14.8,47.6
+Share of rise removed: local sales,4.7,-3.2,15.2
+Observed 2020-22,29.1,,
+Observed 2014-19,16.0,,

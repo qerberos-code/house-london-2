@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+.DS_Store
+# Raw data is re-downloadable via exploratory.download_parquet()
+data/

@@ -1,0 +1,8 @@
+variant,n,lapse_rate,rate_effect,rate_se,rate_x_sale_within_year,rate_x_sale_se,sales_within_year,sales_se
+Main specification,4253,0.193,0.622,0.148,-0.231,0.127,-0.142,0.161
+Complete cases only (tenure known),3255,0.213,0.641,0.145,-0.295,0.123,-0.137,0.15
+Superseded counted as started,5064,0.162,0.582,0.14,-0.165,0.121,-0.089,0.156
+Superseded counted as lapsed,5064,0.322,0.507,0.133,-0.312,0.114,-0.223,0.157
+Late token starts counted as lapsed,4253,0.205,0.546,0.147,-0.171,0.117,-0.108,0.158
+Rate = 95% LTV mortgage,4253,0.193,0.645,0.148,-0.239,0.127,-0.148,0.16
+Rate = SONIA (developer finance proxy),4253,0.193,0.59,0.137,-0.239,0.122,-0.128,0.159

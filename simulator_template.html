@@ -1,0 +1,272 @@
+<title>Will It Get Built?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f4f6f4; --surface: #ffffff; --ink: #17201b; --ink-2: #56605a; --rule: #dde2de;
+  --built: #2a6fdb; --lapsed: #de5f2e; --track: #e6eae7; --focus: #2a6fdb;
+  --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111513; --surface: #1a1f1c; --ink: #edf1ee; --ink-2: #a6afa9; --rule: #2d3531;
+    --built: #5b93f2; --lapsed: #f07c4c; --track: #2a312d; --focus: #5b93f2;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111513; --surface: #1a1f1c; --ink: #edf1ee; --ink-2: #a6afa9; --rule: #2d3531;
+  --built: #5b93f2; --lapsed: #f07c4c; --track: #2a312d; --focus: #5b93f2;
+}
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; padding-block: 28px 48px; display: grid; gap: 28px; }
+header { display: grid; gap: 6px; max-width: 70ch; }
+.eyebrow { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+h1 { font-size: clamp(26px, 4vw, 36px); line-height: 1.15; margin: 0; font-weight: 700; text-wrap: balance; }
+h2 { font-size: 17px; margin: 0; font-weight: 600; text-wrap: balance; }
+p { margin: 0; }
+.lede { color: var(--ink-2); }
+.grid { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 18px; }
+.field { display: grid; gap: 6px; }
+.field-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+label { font-weight: 500; }
+.val { font: 500 14px var(--mono); font-variant-numeric: tabular-nums; }
+.hint { font-size: 12.5px; color: var(--ink-2); }
+input[type=range] { width: 100%; accent-color: var(--built); }
+select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; width: 100%; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+button { font: 500 13px var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+button[aria-pressed="true"] { border-color: var(--built); color: var(--built); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.switch { display: flex; align-items: center; gap: 8px; }
+.results { display: grid; gap: 20px; }
+.big { display: grid; gap: 4px; }
+.big .num { font: 500 clamp(40px, 7vw, 56px)/1 var(--mono); font-variant-numeric: tabular-nums; }
+.bar { position: relative; height: 14px; border-radius: 7px; background: var(--track); overflow: hidden; display: flex; gap: 2px; }
+.bar .b { background: var(--built); height: 100%; border-radius: 7px 0 0 7px; }
+.bar .l { background: var(--lapsed); height: 100%; flex: 1; border-radius: 0 7px 7px 0; }
+.legend { display: flex; gap: 16px; font-size: 13px; color: var(--ink-2); flex-wrap: wrap; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .stats { grid-template-columns: minmax(0, 1fr); } }
+.stat { border-top: 1px solid var(--rule); padding-top: 10px; display: grid; gap: 2px; }
+.stat .k { font-size: 12.5px; color: var(--ink-2); }
+.stat .v { font: 500 22px var(--mono); font-variant-numeric: tabular-nums; }
+.delta-good { color: var(--built); } .delta-bad { color: var(--lapsed); }
+.drivers { display: grid; gap: 8px; }
+.drv { display: grid; grid-template-columns: minmax(0, 1fr) 70px; gap: 12px; align-items: center; font-size: 14px; }
+.drv .track { position: relative; height: 10px; background: var(--track); border-radius: 5px; }
+.drv .fill { position: absolute; top: 0; height: 100%; border-radius: 5px; }
+.drv .mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--ink-2); }
+.drv .name { display: grid; gap: 4px; }
+.drv .pp { font: 500 13px var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.notes { font-size: 13px; color: var(--ink-2); display: grid; gap: 6px; max-width: 80ch; }
+.notes strong { color: var(--ink); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">London · approved schemes of 10+ homes</span>
+    <h1>Will it get built?</h1>
+    <p class="lede">Chance that an approved London housing scheme starts before its 3-year permission lapses, under the market conditions you set. Estimated from <span id="n-schemes"></span> schemes approved 2014–2022.</p>
+  </header>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="mkt-h">
+      <h2 id="mkt-h">Market over the next 3 years</h2>
+      <div class="presets" role="group" aria-label="Scenario presets">
+        <button type="button" id="p-calm" >2015–19 conditions</button>
+        <button type="button" id="p-today">Today</button>
+        <button type="button" id="p-shock" >2022–23 shock</button>
+      </div>
+      <div class="field">
+        <div class="field-top"><label for="rate">2-year fixed mortgage rate</label><span class="val" id="rate-v"></span></div>
+        <input type="range" id="rate" min="1.5" max="6" step="0.1">
+        <span class="hint">Average rate lenders quote at 75% LTV (Bank of England IUMBV34). Latest: <span id="rate-now"></span>. Past 5% is beyond anything the model has seen.</span>
+      </div>
+      <div class="field">
+        <div class="field-top"><label for="cost">Build-cost rise over 3 years</label><span class="val" id="cost-v"></span></div>
+        <input type="range" id="cost" min="0" max="0.3" step="0.01">
+        <span class="hint">ONS new-housing output price index. Last 3 years: <span id="cost-now"></span>.</span>
+      </div>
+      <div class="field">
+        <div class="field-top"><label for="sales">Local home sales vs. normal</label><span class="val" id="sales-v"></span></div>
+        <input type="range" id="sales" min="0.6" max="1.2" step="0.01">
+        <span class="hint">Homes sold in the borough (UK HPI), relative to its 2014–19 average. Last 12 months: <span id="sales-now"></span>.</span>
+      </div>
+
+      <h2>The scheme</h2>
+      <div class="field">
+        <div class="field-top"><label for="units">Homes</label><span class="val" id="units-v"></span></div>
+        <input type="range" id="units" min="0" max="100" step="1">
+      </div>
+      <div class="field">
+        <div class="field-top"><label for="sale">Share for open-market sale</label><span class="val" id="sale-v"></span></div>
+        <input type="range" id="sale" min="0" max="1" step="0.05">
+        <span class="hint">The rest is affordable or other tenures.</span>
+      </div>
+      <div class="field">
+        <label for="borough">Borough</label>
+        <select id="borough"></select>
+        <span class="hint">Sets local house prices (UK HPI, <span id="hpi-month"></span>): <span id="hpi-v" class="val"></span></span>
+      </div>
+      <label class="switch"><input type="checkbox" id="tall"> Tall building (7+ storeys)</label>
+    </section>
+
+    <div class="results">
+      <section class="panel" aria-labelledby="one-h">
+        <h2 id="one-h">This scheme</h2>
+        <div class="big">
+          <span class="num" id="p-built"></span>
+          <span class="lede">chance it starts before permission lapses · <span id="p-range" class="val"></span></span>
+        </div>
+        <div class="bar" aria-hidden="true"><div class="b" id="bar-b"></div><div class="l"></div></div>
+        <div class="legend"><span><span class="dot" style="background:var(--built)"></span>Starts</span><span><span class="dot" style="background:var(--lapsed)"></span>Lapses unbuilt</span></div>
+        <div class="drivers" id="drivers" aria-label="What moves this scheme's chance, versus 2015–19 market conditions"></div>
+        <p class="hint">Bars show how each factor moves this scheme's chance of starting, compared with 2015–19 market conditions (1.6% rate, 10% cost rise, normal sales).</p>
+      </section>
+
+      <section class="panel" aria-labelledby="pipe-h">
+        <h2 id="pipe-h">London's live pipeline</h2>
+        <p class="lede"><span id="pipe-n"></span> schemes approved since 2023 have not started yet, holding <span id="pipe-homes"></span> homes. Under this market:</p>
+        <div class="stats">
+          <div class="stat"><span class="k">Homes expected to lapse</span><span class="v" id="s-lapse"></span><span class="k" id="s-range"></span></div>
+          <div class="stat"><span class="k">vs. market today</span><span class="v" id="s-vs-today"></span></div>
+          <div class="stat"><span class="k">vs. 2015–19 conditions</span><span class="v" id="s-vs-calm"></span></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="notes">
+    <p><strong>How to read this.</strong> A logistic model of whether each approved scheme lapsed, fitted on Planning London Datahub records with Bank of England, ONS and UK HPI series. It captures average patterns, not the fate of a single site: out-of-sample it ranks schemes only moderately well (AUC <span id="auc"></span>), so read changes, not exact levels. Ranges come from refitting the model on 200 resamples of whole boroughs.</p>
+    <p><strong>What it cannot see.</strong> Land prices, developer finance terms and viability assessments are not public. Rates and costs rose together in 2022–23, so their separate effects are estimated with uncertainty. These are associations, not proof of cause. "Starts" means recorded commencement, which can be a token start.</p>
+  </section>
+</div>
+
+<script>
+const D = __SIM_DATA__;
+const S = D.scaling;
+const $ = id => document.getElementById(id);
+const z = (k, raw) => (raw - S[k].mean) / S[k].std;
+const CALM = { rate: 1.6, cost: 0.10, sales: 1.0 };
+// The 2022 approval cohort: mean rate and local sales over its 3-year window; the peak cost rise seen by any cohort.
+const SHOCK = { rate: 4.8, cost: 0.25, sales: 0.82 };
+
+function pLapse(s, C = D.coef) {
+  const zr = z("z_rate", s.rate), zc = z("z_cost", s.cost), zh = z("z_hpi", s.logHpi), zu = z("z_units", Math.log(s.units));
+  const zs = z("z_sales", Math.log(s.sales));
+  const x = C.Intercept + C.sale * s.sale + C.sale_missing * (s.saleMissing || 0) + C.z_units * zu
+    + C.tall * s.tall + C.storeys_missing * (s.storeysMissing || 0) + C.z_hpi * zh
+    + C.z_rate * zr + C["z_rate:sale"] * zr * s.sale + C.z_cost * zc + C["z_cost:z_hpi"] * zc * zh
+    + C.z_sales * zs + C["z_sales:sale"] * zs * s.sale;
+  return 1 / (1 + Math.exp(-x));
+}
+
+// Homes slider is log-scaled: 0..100 -> 10..3000 homes.
+const unitsFromSlider = v => Math.round(10 * Math.pow(300, v / 100));
+const sliderFromUnits = u => Math.round(100 * Math.log(u / 10) / Math.log(300));
+const pct = (v, d = 0) => (v * 100).toFixed(d) + "%";
+const fmt = n => Math.round(n).toLocaleString("en-GB");
+
+function state() {
+  const b = $("borough").value;
+  return {
+    rate: +$("rate").value, cost: +$("cost").value, sales: +$("sales").value, units: unitsFromSlider(+$("units").value),
+    sale: +$("sale").value, tall: $("tall").checked ? 1 : 0, logHpi: Math.log(D.boroughs[b]), borough: b,
+  };
+}
+
+function pipelineLapse(m, coef = D.coef) {
+  return D.pipeline.reduce((acc, [units, sale, saleMissing, tall, storeysMissing, logHpi]) =>
+    acc + units * pLapse({ ...m, units, sale, saleMissing, tall, storeysMissing, logHpi }, coef), 0);
+}
+
+// 90% range across the cluster-bootstrap coefficient draws.
+function band(f) {
+  const v = D.draws.map(f).sort((a, b) => a - b);
+  return [v[Math.floor(0.05 * (v.length - 1))], v[Math.ceil(0.95 * (v.length - 1))]];
+}
+
+function drivers(s) {
+  // Change in P(start) when each input moves from the calm/London-typical reference to the chosen value.
+  const ref = { ...s, ...CALM };
+  const base = 1 - pLapse(ref);
+  const rows = [
+    ["Mortgage rate", { ...ref, rate: s.rate }],
+    ["Build-cost rise", { ...ref, cost: s.cost }],
+    ["Local home sales", { ...ref, sales: s.sales }],
+  ];
+  return rows.map(([name, st]) => [name, (1 - pLapse(st)) - base]);
+}
+
+function render() {
+  const s = state();
+  $("rate-v").textContent = s.rate.toFixed(1) + "%";
+  $("cost-v").textContent = "+" + pct(s.cost);
+  $("sales-v").textContent = pct(s.sales);
+  $("units-v").textContent = fmt(s.units);
+  $("sale-v").textContent = pct(s.sale);
+  $("hpi-v").textContent = "£" + fmt(D.boroughs[s.borough]);
+
+  const built = 1 - pLapse(s);
+  $("p-built").textContent = pct(built);
+  const [bLo, bHi] = band(c => 1 - pLapse(s, c));
+  $("p-range").textContent = `90% range ${pct(bLo)}–${pct(bHi)}`;
+  $("bar-b").style.width = (built * 100).toFixed(1) + "%";
+
+  $("drivers").innerHTML = drivers(s).map(([name, d]) => {
+    const w = Math.min(Math.abs(d) * 100 * 2, 50);  // 1pp = 2% of track, capped at half
+    const cls = d >= 0 ? "delta-good" : "delta-bad";
+    const left = d >= 0 ? 50 : 50 - w;
+    const color = d >= 0 ? "var(--built)" : "var(--lapsed)";
+    return `<div class="drv"><div class="name"><span>${name}</span><div class="track"><div class="fill" style="left:${left}%;width:${w}%;background:${color}"></div><div class="mid"></div></div></div><span class="pp ${cls}">${d >= 0 ? "+" : "−"}${Math.abs(d * 100).toFixed(1)}pp</span></div>`;
+  }).join("");
+
+  const lapse = pipelineLapse(s);
+  const today = pipelineLapse(D.today);
+  const calm = pipelineLapse(CALM);
+  $("s-lapse").textContent = fmt(lapse);
+  const [lo, hi] = band(c => pipelineLapse(s, c));
+  $("s-range").textContent = `90% range ${fmt(lo)}–${fmt(hi)}`;
+  for (const [id, ref] of [["s-vs-today", today], ["s-vs-calm", calm]]) {
+    const d = lapse - ref;
+    $(id).textContent = (d > 0 ? "+" : d < 0 ? "−" : "") + fmt(Math.abs(d));
+    $(id).className = "v " + (d > 0.5 ? "delta-bad" : d < -0.5 ? "delta-good" : "");
+  }
+
+  const presets = { "p-calm": CALM, "p-today": D.today, "p-shock": SHOCK };
+  for (const [id, p] of Object.entries(presets)) {
+    $(id).setAttribute("aria-pressed", Math.abs(p.rate - s.rate) < 0.05 && Math.abs(p.cost - s.cost) < 0.005
+      && Math.abs(p.sales - s.sales) < 0.005);
+  }
+}
+
+function setMarket(m) { $("rate").value = m.rate; $("cost").value = m.cost; $("sales").value = m.sales; render(); }
+
+function init() {
+  $("n-schemes").textContent = fmt(D.n);
+  $("auc").textContent = D.auc.toFixed(2);
+  $("rate-now").textContent = D.today.rate_exact.toFixed(2) + "% (" + D.rate_month + ")";
+  $("cost-now").textContent = "+" + pct(D.today.cost_exact, 1) + " (to " + D.cost_month + ")";
+  $("hpi-month").textContent = D.hpi_month;
+  $("pipe-n").textContent = fmt(D.pipeline.length);
+  $("pipe-homes").textContent = fmt(D.pipeline.reduce((a, r) => a + r[0], 0));
+  $("borough").innerHTML = Object.keys(D.boroughs).map(b => `<option>${b}</option>`).join("");
+  $("borough").value = "Croydon" in D.boroughs ? "Croydon" : Object.keys(D.boroughs)[0];
+  $("units").value = sliderFromUnits(60);
+  $("sale").value = 0.75;
+  $("sales-now").textContent = pct(D.today.sales) + " (to " + D.sales_month + ")";
+  $("p-calm").onclick = () => setMarket(CALM);
+  $("p-today").onclick = () => setMarket(D.today);
+  $("p-shock").onclick = () => setMarket(SHOCK);
+  for (const id of ["rate", "cost", "sales", "units", "sale", "borough", "tall"]) $(id).addEventListener("input", render);
+  setMarket(D.today);
+}
+init();
+</script>

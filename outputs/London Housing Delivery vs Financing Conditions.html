@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where London Housing Delivery Stalls</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<style>
+  :root{
+    --bg:#f6f5f2;
+    --panel:#ffffff;
+    --ink:#1c1b19;
+    --muted:#6b6862;
+    --line:#e6e3dc;
+    --accent:#a4462f;
+    --accent2:#2f5d50;
+    --accent3:#c98a2c;
+    --good:#2f5d50;
+    --bad:#a4462f;
+
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    box-sizing:border-box;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#17161a;
+      --panel:#211f24;
+      --ink:#efece6;
+      --muted:#a29d92;
+      --line:#332f34;
+    }
+  }
+
+  :root[data-theme="dark"]{
+    --bg:#17161a;
+    --panel:#211f24;
+    --ink:#efece6;
+    --muted:#a29d92;
+    --line:#332f34;
+  }
+
+  *{box-sizing:border-box;}
+
+  html{
+    scroll-padding-top:env(safe-area-inset-top,0px);
+    scroll-behavior:smooth;
+  }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Georgia','Iowan Old Style',serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* =========================================================
+     HEADER
+     ========================================================= */
+
+  header{
+    padding:34px clamp(16px,4vw,48px) 26px;
+    border-bottom:1px solid var(--line);
+    max-width:1280px;
+    margin:0 auto;
+  }
+
+  header .eyebrow{
+    margin-bottom:9px;
+  }
+
+  header h1{
+    margin:0 0 10px;
+    font-size:clamp(28px,4vw,44px);
+    line-height:1.08;
+    font-weight:600;
+    letter-spacing:-0.025em;
+  }
+
+  header p{
+    margin:0;
+    color:var(--muted);
+    font-size:15px;
+    max-width:78ch;
+    line-height:1.6;
+  }
+
+  /* =========================================================
+     GENERAL
+     ========================================================= */
+
+  main{
+    padding:28px clamp(16px,4vw,48px) 60px;
+    max-width:1280px;
+    margin:0 auto;
+  }
+
+  .eyebrow{
+    display:block;
+    font-family:Arial,sans-serif;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.13em;
+    color:var(--accent);
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
+
+  .section-heading{
+    margin-bottom:16px;
+  }
+
+  .section-heading h2{
+    margin:0;
+    font-size:clamp(22px,3vw,30px);
+    line-height:1.15;
+  }
+
+  /* =========================================================
+     KPI CARDS
+     ========================================================= */
+
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:12px;
+    margin-bottom:34px;
+  }
+
+  .kpi{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:17px 18px;
+  }
+
+  .kpi .label{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    color:var(--muted);
+    font-family:Arial,sans-serif;
+  }
+
+  .kpi .value{
+    font-size:clamp(24px,3vw,32px);
+    font-weight:600;
+    margin-top:7px;
+  }
+
+  .kpi .value.neg{color:var(--bad);}
+  .kpi .value.pos{color:var(--good);}
+
+  .kpi .detail{
+    margin-top:5px;
+    color:var(--muted);
+    font-family:Arial,sans-serif;
+    font-size:11px;
+    line-height:1.4;
+  }
+
+  /* =========================================================
+     STORY INTRO
+     ========================================================= */
+
+  .story{
+    margin-bottom:42px;
+  }
+
+  .story-intro{
+    max-width:850px;
+    margin-bottom:25px;
+  }
+
+  .story-intro h2{
+    margin:0 0 10px;
+    font-size:clamp(23px,3vw,32px);
+    line-height:1.15;
+  }
+
+  .story-intro p{
+    margin:0;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.65;
+  }
+
+  /* =========================================================
+     PIPELINE
+     ========================================================= */
+
+  .pipeline{
+    display:grid;
+    grid-template-columns:1fr auto 1fr auto 1fr;
+    gap:12px;
+    align-items:stretch;
+    margin:24px 0;
+  }
+
+  .step{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:19px;
+  }
+
+  .step.highlight{
+    border-color:var(--accent3);
+  }
+
+  .step-number{
+    font-family:Arial,sans-serif;
+    font-size:10px;
+    font-weight:700;
+    color:var(--muted);
+    margin-bottom:12px;
+    letter-spacing:.08em;
+  }
+
+  .step h3{
+    margin:0 0 8px;
+    font-size:16px;
+  }
+
+  .step p{
+    margin:0;
+    color:var(--muted);
+    font-family:Arial,sans-serif;
+    font-size:12.5px;
+    line-height:1.55;
+  }
+
+  .arrow{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    color:var(--muted);
+  }
+
+  /* =========================================================
+     EXPLANATION CARDS
+     ========================================================= */
+
+  .explain-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .explain-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:19px;
+  }
+
+  .explain-card h3{
+    margin:0 0 8px;
+    font-size:15px;
+  }
+
+  .explain-card p{
+    margin:0;
+    color:var(--muted);
+    font-family:Arial,sans-serif;
+    font-size:12.5px;
+    line-height:1.6;
+  }
+
+  /* =========================================================
+     FINDINGS
+     ========================================================= */
+
+  .findings{
+    margin-bottom:42px;
+  }
+
+  .finding-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+
+  .finding{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+  }
+
+  .finding-number{
+    font-size:26px;
+    font-weight:600;
+    line-height:1.1;
+    margin-bottom:12px;
+  }
+
+  .finding h3{
+    margin:0 0 7px;
+    font-size:15px;
+  }
+
+  .finding p{
+    margin:0;
+    color:var(--muted);
+    font-family:Arial,sans-serif;
+    font-size:12px;
+    line-height:1.55;
+  }
+
+  /* =========================================================
+     CHARTS
+     ========================================================= */
+
+  .grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:16px;
+    margin-bottom:16px;
+  }
+
+  .grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .panel h2{
+    margin:0 0 4px;
+    font-size:16px;
+    font-weight:600;
+  }
+
+  .panel .sub{
+    margin:0 0 14px;
+    color:var(--muted);
+    font-size:12.5px;
+    font-family:Arial,sans-serif;
+    line-height:1.5;
+  }
+
+  .chart-wrap{
+    position:relative;
+    flex:1;
+    min-height:280px;
+    overflow-x:auto;
+  }
+
+  .chart-wrap canvas{
+    max-width:100%;
+  }
+
+  /* =========================================================
+     INTERPRETATION
+     ========================================================= */
+
+  .interpretation{
+    margin-top:42px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:25px;
+  }
+
+  .interpretation-main{
+    max-width:850px;
+  }
+
+  .interpretation h2{
+    margin:0 0 14px;
+    font-size:clamp(22px,3vw,30px);
+    line-height:1.15;
+  }
+
+  .interpretation p{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.65;
+    margin:0 0 12px;
+  }
+
+  .quote{
+    border-left:3px solid var(--accent2);
+    padding:10px 0 10px 14px;
+    margin-top:18px;
+    font-family:Arial,sans-serif;
+    font-size:13px;
+    line-height:1.55;
+  }
+
+  .quote.caution{
+    border-left-color:var(--accent);
+  }
+
+  /* =========================================================
+     RECENT COHORTS
+     ========================================================= */
+
+  .recent-cohorts{
+    margin-top:16px;
+    padding:23px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:var(--panel);
+  }
+
+  .recent-cohorts h2{
+    margin:0 0 10px;
+    font-size:22px;
+  }
+
+  .recent-cohorts p{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+    max-width:850px;
+  }
+
+  /* =========================================================
+     METHODOLOGY
+     ========================================================= */
+
+  .methodology{
+    margin-top:42px;
+  }
+
+  .method-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+
+  .method-grid > div{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+  }
+
+  .method-grid h3{
+    margin:0 0 8px;
+    font-size:15px;
+  }
+
+  .method-grid p{
+    margin:0;
+    color:var(--muted);
+    font-family:Arial,sans-serif;
+    font-size:12px;
+    line-height:1.55;
+  }
+
+  /* =========================================================
+     LIMITATIONS
+     ========================================================= */
+
+  .limitations{
+    margin-top:42px;
+    border-top:1px solid var(--line);
+    padding-top:25px;
+  }
+
+  .limitations h2{
+    margin:0 0 12px;
+    font-size:24px;
+  }
+
+  .limitations ul{
+    max-width:850px;
+    padding-left:20px;
+    margin:0;
+  }
+
+  .limitations li{
+    color:var(--muted);
+    font-family:Arial,sans-serif;
+    font-size:13px;
+    line-height:1.65;
+    margin-bottom:6px;
+  }
+
+  /* =========================================================
+     FOOTER
+     ========================================================= */
+
+  .foot{
+    margin-top:35px;
+    padding-top:17px;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:11.5px;
+    font-family:Arial,sans-serif;
+    line-height:1.6;
+  }
+
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+
+  @media(max-width:900px){
+
+    .finding-grid,
+    .method-grid{
+      grid-template-columns:1fr 1fr;
+    }
+
+    .pipeline{
+      grid-template-columns:1fr;
+    }
+
+    .arrow{
+      transform:rotate(90deg);
+      min-height:25px;
+    }
+  }
+
+  @media(max-width:820px){
+
+    .grid,
+    .grid2,
+    .explain-grid{
+      grid-template-columns:1fr;
+    }
+  }
+
+  @media(max-width:600px){
+
+    .finding-grid,
+    .method-grid{
+      grid-template-columns:1fr;
+    }
+
+    header{
+      padding-top:25px;
+    }
+
+    .panel{
+      padding:15px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <span class="eyebrow">HOUSE LONDON #2 · DATA HACKATHON</span>
+
+  <h1>Where London Housing Delivery Stalls</h1>
+
+  <p>
+    Planning permission is not the same as construction. We examine
+    26,961 London residential planning permissions decided between
+    2018 and 2023 and ask whether schemes facing different financing
+    conditions have different rates of starting construction within
+    three years.
+  </p>
+</header>
+
+
+<main>
+
+  <!-- =======================================================
+       KPIs
+       ======================================================= -->
+
+  <section class="kpis" id="kpis"></section>
+
+
+  <!-- =======================================================
+       THE QUESTION
+       ======================================================= -->
+
+  <section class="story">
+
+    <div class="story-intro">
+
+      <span class="eyebrow">THE QUESTION</span>
+
+      <h2>Planning permission is not the same as housing delivery.</h2>
+
+      <p>
+        A scheme can receive planning permission without immediately
+        becoming a construction project. We therefore follow schemes
+        after permission and ask a simple question:
+        <strong>did construction actually start within three years?</strong>
+      </p>
+
+    </div>
+
+
+    <div class="pipeline">
+
+      <div class="step">
+
+        <div class="step-number">01 · PERMISSION</div>
+
+        <h3>Planning decision</h3>
+
+        <p>
+          A residential planning application receives a decision.
+          This becomes the starting point for our observation window.
+        </p>
+
+      </div>
+
+
+      <div class="arrow">→</div>
+
+
+      <div class="step highlight">
+
+        <div class="step-number">02 · ENVIRONMENT</div>
+
+        <h3>Changing market conditions</h3>
+
+        <p>
+          During the following three years, schemes experience changing
+          mortgage rates and construction costs.
+        </p>
+
+      </div>
+
+
+      <div class="arrow">→</div>
+
+
+      <div class="step">
+
+        <div class="step-number">03 · DELIVERY</div>
+
+        <h3>Construction start</h3>
+
+        <p>
+          We record whether the scheme started construction within
+          three years of its planning decision.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="explain-grid">
+
+      <div class="explain-card">
+
+        <span class="eyebrow">WHY THREE YEARS?</span>
+
+        <h3>A common observation window</h3>
+
+        <p>
+          Every permission receives the same three-year window in which
+          to observe whether construction begins. This makes different
+          approval cohorts more comparable and avoids treating a very
+          recent permission as a failure simply because it has not had
+          enough time to progress.
+        </p>
+
+      </div>
+
+
+      <div class="explain-card">
+
+        <span class="eyebrow">WHAT IS RATE EXPOSURE?</span>
+
+        <h3>The financing environment after permission</h3>
+
+        <p>
+          Schemes are grouped according to the change in mortgage rates
+          they experienced during the following three years. "Rising most"
+          means the largest increases in this dataset; "Falling most"
+          means the largest decreases.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       KEY FINDINGS
+       ======================================================= -->
+
+  <section class="findings">
+
+    <div class="section-heading">
+
+      <span class="eyebrow">WHAT WE FIND</span>
+
+      <h2>Four patterns stand out</h2>
+
+    </div>
+
+
+    <div class="finding-grid">
+
+      <div class="finding">
+
+        <div class="finding-number">54.2%</div>
+
+        <h3>Just over half started</h3>
+
+        <p>
+          Across 26,961 schemes, 54.2% recorded a construction start
+          within three years of planning permission.
+        </p>
+
+      </div>
+
+
+      <div class="finding">
+
+        <div class="finding-number">60.0 → 46.7%</div>
+
+        <h3>Start rates vary with rate exposure</h3>
+
+        <p>
+          The observed start rate falls from 60.0% in the
+          "Falling most" group to 46.7% in the "Rising most" group.
+        </p>
+
+      </div>
+
+
+      <div class="finding">
+
+        <div class="finding-number">31.6 → 78.8%</div>
+
+        <h3>London varies substantially</h3>
+
+        <p>
+          Borough-level start rates range widely, showing that financing
+          conditions cannot explain all of the variation in delivery.
+        </p>
+
+      </div>
+
+
+      <div class="finding">
+
+        <div class="finding-number">+15.2%</div>
+
+        <h3>Costs also changed</h3>
+
+        <p>
+          Average forward construction-cost change was 15.2%.
+          Rate conditions therefore need to be considered alongside
+          wider development costs.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       MAIN CHARTS
+       ======================================================= -->
+
+  <div class="grid">
+
+    <div class="panel">
+
+      <h2>Construction start rates vary with financing conditions</h2>
+
+      <p class="sub">
+        Bars show the share of schemes approved in each quarter that
+        started within three years. The line shows the average mortgage-rate
+        change experienced during those three years.
+      </p>
+
+      <div class="chart-wrap">
+        <canvas id="quarterlyChart"></canvas>
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h2>Start rate by rate exposure</h2>
+
+      <p class="sub">
+        Schemes are grouped into five equal-sized groups according to
+        the mortgage-rate change they experienced during their following
+        three years.
+      </p>
+
+      <div class="chart-wrap">
+        <canvas id="rateBinChart"></canvas>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       BOROUGH + STATUS
+       ======================================================= -->
+
+  <div class="grid2">
+
+    <div class="panel">
+
+      <h2>Start rate by borough</h2>
+
+      <p class="sub">
+        Boroughs with 100+ decisions in this window. The wide range
+        suggests that local factors such as land, viability and planning
+        conditions may also matter.
+      </p>
+
+      <div class="chart-wrap" style="min-height:640px;">
+        <canvas id="boroughChart"></canvas>
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h2>Outcome mix by decision year</h2>
+
+      <p class="sub">
+        Later cohorts contain more schemes that have not yet resolved
+        their delivery outcome. Recent permissions therefore need to
+        be interpreted with caution.
+      </p>
+
+      <div class="chart-wrap">
+        <canvas id="statusChart"></canvas>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       INTERPRETATION
+       ======================================================= -->
+
+  <section class="interpretation">
+
+    <div class="interpretation-main">
+
+      <span class="eyebrow">HOW SHOULD WE INTERPRET THIS?</span>
+
+      <h2>
+        The relationship is interesting — but it is not a causal estimate.
+      </h2>
+
+      <p>
+        Schemes facing larger increases in mortgage rates have lower
+        observed construction-start rates. This is consistent with
+        financing conditions being associated with development delivery.
+      </p>
+
+      <p>
+        But interest rates do not move in isolation. Construction costs,
+        housing demand, land values, economic conditions and local scheme
+        characteristics can change at the same time.
+      </p>
+
+
+      <div class="quote">
+
+        <strong>What we can say:</strong><br>
+
+        Schemes exposed to different financing environments have
+        different observed construction-start rates.
+
+      </div>
+
+
+      <div class="quote caution">
+
+        <strong>What we cannot say from this analysis:</strong><br>
+
+        That a particular increase in interest rates caused a particular
+        scheme not to start.
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       RECENT COHORTS
+       ======================================================= -->
+
+  <section class="recent-cohorts">
+
+    <span class="eyebrow">AN IMPORTANT CAVEAT</span>
+
+    <h2>Recent permissions have not had as much time to progress.</h2>
+
+    <p>
+      A scheme approved in 2023 cannot be interpreted in exactly the
+      same way as one approved in 2018. The later scheme has had less
+      time to move through planning, financing and construction.
+    </p>
+
+    <p>
+      This is why the analysis uses a fixed three-year observation
+      window rather than simply asking whether a scheme has ever
+      started or completed.
+    </p>
+
+  </section>
+
+
+  <!-- =======================================================
+       METHODOLOGY
+       ======================================================= -->
+
+  <section class="methodology">
+
+    <div class="section-heading">
+
+      <span class="eyebrow">METHOD</span>
+
+      <h2>How the analysis was constructed</h2>
+
+    </div>
+
+
+    <div class="method-grid">
+
+      <div>
+
+        <h3>Population</h3>
+
+        <p>
+          26,961 London residential planning permissions decided
+          between 2018 and 2023.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        <h3>Outcome</h3>
+
+        <p>
+          Whether a scheme recorded a construction start within
+          three years of its planning decision.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        <h3>Financing exposure</h3>
+
+        <p>
+          Schemes are grouped into five exposure groups according
+          to mortgage-rate change during the following three years.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        <h3>Geography</h3>
+
+        <p>
+          Start rates are compared across London boroughs.
+          Boroughs with fewer than 100 decisions are excluded
+          from the borough comparison.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       LIMITATIONS / NEXT STEP
+       ======================================================= -->
+
+  <section class="limitations">
+
+    <span class="eyebrow">NEXT STEP</span>
+
+    <h2>What would we do next?</h2>
+
+    <ul>
+
+      <li>
+        Control for scheme size, tenure and borough characteristics.
+      </li>
+
+      <li>
+        Separate the association with financing conditions from
+        construction-cost changes.
+      </li>
+
+      <li>
+        Use survival analysis to account more explicitly for schemes
+        that have not yet had enough time to complete.
+      </li>
+
+      <li>
+        Investigate whether planning-process events, such as amendments
+        or condition discharges, provide early signals of delivery risk.
+      </li>
+
+    </ul>
+
+  </section>
+
+
+  <!-- =======================================================
+       FOOTER
+       ======================================================= -->
+
+  <p class="foot">
+
+    <strong>Source:</strong>
+    uploaded <em>schemes_with_market.csv</em> for this session.
+
+    "Started within 3y" and the rate, cost and sales-change fields
+    are used as provided in the dataset.
+
+    The analysis is descriptive and does not by itself establish
+    causality. Rate and cost changes are correlated, so separating
+    their individual associations would require additional controls
+    and modelling.
+
+  </p>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   DATA
+   ========================================================= */
+
+const DATA = {
+
+  "kpis": {
+    "schemes": 26961,
+    "start_rate": 0.5416713029932124,
+    "avg_rate_change": 0.8169658791341301,
+    "avg_cost_change": 0.15222248854938358
+  },
+
+  "quarterly": {
+
+    "labels": [
+      "2018Q1","2018Q2","2018Q3","2018Q4",
+      "2019Q1","2019Q2","2019Q3","2019Q4",
+      "2020Q1","2020Q2","2020Q3","2020Q4",
+      "2021Q1","2021Q2","2021Q3","2021Q4",
+      "2022Q1","2022Q2","2022Q3","2022Q4",
+      "2023Q1","2023Q2","2023Q3"
+    ],
+
+    "start_rate": [
+      0.6557,0.6597,0.6544,0.635,
+      0.6139,0.604,0.5855,0.5641,
+      0.5284,0.4668,0.4926,0.5024,
+      0.4599,0.4895,0.4434,0.4682,
+      0.4764,0.455,0.4553,0.6077,
+      0.527,0.4685,0.4634
+    ],
+
+    "avg_rate_change": [
+      0.1066,-0.1186,-0.1581,-0.2152,
+      -0.1617,-0.0509,0.1614,0.6184,
+      0.9652,1.2558,1.4184,1.4232,
+      1.9689,2.4437,2.9489,2.9917,
+      2.8323,2.2593,1.195,-0.9584,
+      -0.135,-0.2174,-1.5209
+    ],
+
+    "n": [
+      1336,1443,1409,1356,
+      1339,1255,1375,1248,
+      1162,1114,1151,1236,
+      1209,1099,1069,1102,
+      1100,978,1063,1142,
+      943,984,848
+    ]
+  },
+
+  "rate_bins": {
+
+    "labels":[
+      "Falling most",
+      "Falling",
+      "Mid",
+      "Rising",
+      "Rising most"
+    ],
+
+    "start_rate":[
+      0.6004,
+      0.6066,
+      0.5549,
+      0.4747,
+      0.4672
+    ],
+
+    "n":[
+      5530,
+      5600,
+      5205,
+      5321,
+      5066
+    ]
+  },
+
+  "borough": {
+
+    "labels":[
+      "kensington and chelsea",
+      "hackney",
+      "lambeth",
+      "croydon",
+      "sutton",
+      "harrow",
+      "brent",
+      "merton",
+      "richmond upon thames",
+      "hounslow",
+      "waltham forest",
+      "tower hamlets",
+      "havering",
+      "wandsworth",
+      "lewisham",
+      "hillingdon",
+      "enfield",
+      "redbridge",
+      "islington",
+      "hammersmith and fulham",
+      "haringey",
+      "city of westminster",
+      "bromley",
+      "camden",
+      "ealing",
+      "bexley",
+      "kingston upon thames",
+      "greenwich",
+      "barking and dagenham",
+      "southwark",
+      "newham",
+      "barnet"
+    ],
+
+    "start_rate":[
+      0.7883,0.7485,0.6867,0.6785,
+      0.6586,0.6579,0.6525,0.6223,
+      0.6059,0.6048,0.5953,0.5847,
+      0.5843,0.583,0.5706,0.5678,
+      0.5501,0.5419,0.5307,0.5206,
+      0.519,0.5028,0.486,0.4859,
+      0.469,0.4391,0.4123,0.4009,
+      0.3966,0.3744,0.3497,0.316
+    ],
+
+    "n":[
+      326,831,766,1689,457,681,1393,842,
+      505,792,677,862,676,1144,729,863,
+      978,871,358,703,1050,903,930,601,
+      1919,599,553,666,290,796,775,1633
+    ]
+  },
+
+  "status_year": {
+
+    "labels":[
+      "2018","2019","2020","2021","2022","2023"
+    ],
+
+    "series":{
+
+      "Completed":[
+        3642,3267,2530,2276,2128,1282
+      ],
+
+      "Commenced":[
+        369,503,483,528,612,436
+      ],
+
+      "Approved":[
+        8,6,67,60,683,689
+      ],
+
+      "Lapsed":[
+        1077,1155,1365,1450,721,277
+      ],
+
+      "Superseded":[
+        425,239,139,123,98,60
+      ],
+
+      "Other":[
+        23,47,79,42,41,31
+      ]
+    }
+  }
+};
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function css(v){
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(v)
+    .trim();
+}
+
+function pct(x){
+  return (x * 100).toFixed(1) + '%';
+}
+
+
+/* =========================================================
+   KPI CARDS
+   ========================================================= */
+
+const kpiHtml = `
+
+  <div class="kpi">
+
+    <div class="label">
+      Schemes in dataset
+    </div>
+
+    <div class="value">
+      ${DATA.kpis.schemes.toLocaleString()}
+    </div>
+
+    <div class="detail">
+      London residential planning permissions
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="label">
+      Started within 3 years
+    </div>
+
+    <div class="value">
+      ${pct(DATA.kpis.start_rate)}
+    </div>
+
+    <div class="detail">
+      Recorded construction start after permission
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="label">
+      Average forward rate change
+    </div>
+
+    <div class="value ${DATA.kpis.avg_rate_change > 0 ? 'neg' : 'pos'}">
+
+      ${DATA.kpis.avg_rate_change > 0 ? '+' : ''}
+      ${DATA.kpis.avg_rate_change.toFixed(2)}pp
+
+    </div>
+
+    <div class="detail">
+      During the following three years
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="label">
+      Average forward cost change
+    </div>
+
+    <div class="value neg">
+      +${(DATA.kpis.avg_cost_change * 100).toFixed(1)}%
+    </div>
+
+    <div class="detail">
+      During the following three years
+    </div>
+
+  </div>
+
+`;
+
+document.getElementById('kpis').innerHTML = kpiHtml;
+
+
+/* =========================================================
+   CHART DEFAULTS
+   ========================================================= */
+
+Chart.defaults.font.family = "Arial, sans-serif";
+Chart.defaults.color = css('--muted');
+
+const ink = css('--ink');
+const accent = css('--accent');
+const accent2 = css('--accent2');
+const accent3 = css('--accent3');
+const line = css('--line');
+
+
+/* =========================================================
+   QUARTERLY CHART
+   ========================================================= */
+
+new Chart(
+  document.getElementById('quarterlyChart'),
+  {
+
+    data:{
+
+      labels:DATA.quarterly.labels,
+
+      datasets:[
+
+        {
+          type:'bar',
+          label:'Start rate (within 3y)',
+          data:DATA.quarterly.start_rate,
+          backgroundColor:accent2 + 'cc',
+          yAxisID:'y',
+          order:2,
+          borderRadius:3
+        },
+
+        {
+          type:'line',
+          label:'Avg forward mortgage-rate change (pp)',
+          data:DATA.quarterly.avg_rate_change,
+          borderColor:accent,
+          backgroundColor:accent,
+          yAxisID:'y1',
+          tension:.3,
+          pointRadius:2,
+          order:1
+        }
+
+      ]
+    },
+
+    options:{
+
+      responsive:true,
+      maintainAspectRatio:false,
+
+      interaction:{
+        mode:'index',
+        intersect:false
+      },
+
+      plugins:{
+        legend:{
+          position:'bottom',
+          labels:{
+            boxWidth:12
+          }
+        },
+
+        tooltip:{
+          callbacks:{
+            afterBody:function(context){
+
+              const i = context[0].dataIndex;
+
+              return `\nNumber of schemes: ${DATA.quarterly.n[i].toLocaleString()}`;
+            }
+          }
+        }
+      },
+
+      scales:{
+
+        x:{
+          grid:{
+            display:false
+          },
+
+          ticks:{
+            maxRotation:60,
+            minRotation:60,
+            font:{
+              size:10
+            }
+          }
+        },
+
+        y:{
+          position:'left',
+          min:0,
+          max:0.8,
+
+          ticks:{
+            callback:v => Math.round(v * 100) + '%'
+          },
+
+          title:{
+            display:true,
+            text:'Start rate'
+          },
+
+          grid:{
+            color:line
+          }
+        },
+
+        y1:{
+          position:'right',
+
+          grid:{
+            drawOnChartArea:false
+          },
+
+          title:{
+            display:true,
+            text:'Rate change (pp)'
+          }
+        }
+      }
+    }
+  }
+);
+
+
+/* =========================================================
+   RATE BIN CHART
+   ========================================================= */
+
+new Chart(
+  document.getElementById('rateBinChart'),
+  {
+
+    type:'bar',
+
+    data:{
+
+      labels:DATA.rate_bins.labels,
+
+      datasets:[
+
+        {
+          label:'Start rate',
+
+          data:DATA.rate_bins.start_rate,
+
+          backgroundColor:[
+            accent2,
+            accent2,
+            accent3,
+            accent,
+            accent
+          ].map(c => c + 'cc'),
+
+          borderRadius:4
+        }
+
+      ]
+    },
+
+    options:{
+
+      responsive:true,
+      maintainAspectRatio:false,
+
+      plugins:{
+
+        legend:{
+          display:false
+        },
+
+        tooltip:{
+
+          callbacks:{
+
+            label:ctx =>
+              `${pct(ctx.raw)} started`,
+
+            afterLabel:ctx =>
+              `n = ${DATA.rate_bins.n[ctx.dataIndex].toLocaleString()}`
+          }
+        }
+      },
+
+      scales:{
+
+        x:{
+          grid:{
+            display:false
+          },
+
+          ticks:{
+            font:{
+              size:10
+            }
+          }
+        },
+
+        y:{
+          min:0,
+          max:0.8,
+
+          ticks:{
+            callback:v =>
+              Math.round(v * 100) + '%'
+          },
+
+          grid:{
+            color:line
+          }
+        }
+      }
+    }
+  }
+);
+
+
+/* =========================================================
+   BOROUGH CHART
+   ========================================================= */
+
+new Chart(
+  document.getElementById('boroughChart'),
+  {
+
+    type:'bar',
+
+    data:{
+
+      labels:DATA.borough.labels.map(
+        s => s.replace(/\b\w/g,c => c.toUpperCase())
+      ),
+
+      datasets:[
+
+        {
+          label:'Start rate',
+
+          data:DATA.borough.start_rate,
+
+          backgroundColor:accent2 + 'cc',
+
+          borderRadius:3
+        }
+
+      ]
+    },
+
+    options:{
+
+      indexAxis:'y',
+
+      responsive:true,
+      maintainAspectRatio:false,
+
+      plugins:{
+
+        legend:{
+          display:false
+        },
+
+        tooltip:{
+
+          callbacks:{
+
+            label:ctx =>
+              `${pct(ctx.raw)} started`,
+
+            afterLabel:ctx =>
+              `n = ${DATA.borough.n[ctx.dataIndex].toLocaleString()}`
+          }
+        }
+      },
+
+      scales:{
+
+        x:{
+          min:0,
+          max:0.85,
+
+          ticks:{
+            callback:v =>
+              Math.round(v * 100) + '%'
+          },
+
+          grid:{
+            color:line
+          }
+        },
+
+        y:{
+          grid:{
+            display:false
+          },
+
+          ticks:{
+            font:{
+              size:10.5
+            }
+          }
+        }
+      }
+    }
+  }
+);
+
+
+/* =========================================================
+   STATUS CHART
+   ========================================================= */
+
+const statusColors = {
+
+  Completed:accent2,
+  Commenced:accent3,
+  Approved:'#8a8578',
+  Lapsed:accent,
+  Superseded:'#5a5650',
+  Other:'#c9c4b8'
+
+};
+
+
+new Chart(
+  document.getElementById('statusChart'),
+  {
+
+    type:'bar',
+
+    data:{
+
+      labels:DATA.status_year.labels,
+
+      datasets:
+
+        Object.entries(DATA.status_year.series)
+
+        .map(([k,v]) => ({
+
+          label:k,
+
+          data:v,
+
+          backgroundColor:
+            statusColors[k] + 'cc',
+
+          stack:'s'
+
+        }))
+    },
+
+    options:{
+
+      responsive:true,
+      maintainAspectRatio:false,
+
+      plugins:{
+
+        legend:{
+          position:'bottom',
+
+          labels:{
+            boxWidth:12,
+            font:{
+              size:10.5
+            }
+          }
+        }
+      },
+
+      scales:{
+
+        x:{
+          stacked:true,
+
+          grid:{
+            display:false
+          }
+        },
+
+        y:{
+          stacked:true,
+
+          grid:{
+            color:line
+          },
+
+          title:{
+            display:true,
+            text:'Schemes'
+          }
+        }
+      }
+    }
+  }
+);
+
+</script>
+
+</body>
+</html>
